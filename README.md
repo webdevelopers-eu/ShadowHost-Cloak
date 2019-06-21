@@ -10,6 +10,7 @@ require('load.php');
 
 // List of proxy servers
 $pool=new \ShadowHost\Cloak\PoolXicidaili(__DIR__."/proxy-servers.json");
+// $proxy=new \ShadowHost\Cloak\Proxy(); // no $pool to bypass proxy and make direct requests
 $pool->autoUpdate(); // Download fresh proxies if needed.
 
 $proxy=new \ShadowHost\Cloak\Proxy($pool);
