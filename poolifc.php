@@ -72,11 +72,4 @@ interface PoolIfc extends \JsonSerializable {
      */
     public function update();
 
-    /**
-     * Magic function for json_serialize()
-     *
-     * @access public
-     * @return array of data to be serialized
-     */
-    public function jsonSerialize();
 }
