@@ -1,7 +1,7 @@
 ShadowHost Cloak
 ================
 
-Anonymous asynchronous PHP proxy that processes multiple HTTP requests simultaneously using automatically updated list of proxy servers.
+Anonymously process multiple asynchronous HTTP requests simultaneously using automatically updated list of proxy servers.
 
 Example:
 
@@ -29,14 +29,14 @@ $proxy->execWait();
 
 // Display results
 foreach($requests as $req) {
-    echo "----------------------------------\n";
-    echo "URL: $req->url\n";
-    echo "Proxy: $req->proxy\n";
-    echo "Proxy status: ".@$req->proxyHeaders['@code']." ".@$req->proxyHeaders['@message']."\n";
-    echo "Response status: ".$req->responseHeaders['@code']." ".$req->responseHeaders['@message']."\n";
-    echo "Response length: ".strlen($req->responseBody)."\n";
-    echo "\n";
-    echo $req->responseBody;
+	echo "----------------------------------\n";
+	echo "URL: $req->url\n";
+	echo "Proxy: $req->proxy\n";
+	echo "Proxy status: ".@$req->proxyHeaders['@code']." ".@$req->proxyHeaders['@message']."\n";
+	echo "Response status: ".$req->responseHeaders['@code']." ".$req->responseHeaders['@message']."\n";
+	echo "Response length: ".strlen($req->responseBody)."\n";
+	echo "\n";
+	echo $req->responseBody;
 }
 ```
 
