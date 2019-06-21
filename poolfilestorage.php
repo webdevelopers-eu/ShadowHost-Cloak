@@ -113,7 +113,7 @@ abstract class PoolFileStorage implements PoolIfc {
         $list=array_slice($this->pool, $this->poolIdx++, 1);
 
         return current($list);
-        // return $this->pool[array_rand($this->pool)]; - we use round-robing now
+        // return $this->pool[array_rand($this->pool)]; - we use round-robin now
     }
 
     /**
