@@ -1,0 +1,9 @@
+# Emacs AC-PHP
+.ac-php-conf.json
+
+# Test proxy lists
+*.json
+
+# Tmp files
+.#*
+*~
