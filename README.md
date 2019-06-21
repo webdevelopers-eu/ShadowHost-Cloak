@@ -1,7 +1,7 @@
 ShadowHost Cloak
 ================
 
-Anonymous asynchronous PHP proxy that processes multiple HTTP requests simultaneously throw automatically downloaded list of proxy servers.
+Anonymous asynchronous PHP proxy that processes multiple HTTP requests simultaneously using automatically updated list of proxy servers.
 
 Example:
 
@@ -58,3 +58,16 @@ Notes
 
 * Initial start may be slow - update of proxy server list may take several minutes.
 * Proxies downloaded from Chinese https://xicidaili.com/ are very unreliable so it may take time to find working server and process request. Feel free to implement more reliable list.
+
+API Overview
+------------
+
+`namespace \ShadowHost\Cloak;`
+* **interface PoolIfc** `poolifc.php` - all Pools must implement this Interface
+* **abstract class PoolFileStorage** `poolfilestorage.php` - parent class for pools that use `.json` file as DB storage.
+* **class PoolNoProxy** `poolnoproxy.php` - special pool with only one special proxy server that is empty. It causes \ShadowHost\Cloak\Proxy to bypass proxy and make direct requests.
+* **class PoolStatic** `poolstatic.php` - pool that uses read-only `.json` file that will not be modified. E.g. neither list updates nor reliability score updates will be saved to this file. Use if you have hand-crafterd list of proxies you want to always use.
+* **class PoolXicidaili** `poolxicidaili.php` - pool that downloads list of proxies from Chinese site https://xicidaili.com/
+* **class Proxy** `proxy.php` - object responsible for executing requests.
+* **class Request** `request.php` - represents one request.
+* **class Server** `server.php` - represents one proxy server.

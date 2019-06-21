@@ -5,6 +5,9 @@ namespace ShadowHost\Cloak;
 /**
  * Represents info about Proxy Server.
  *
+ * If both $ip and $port are false then proxy will be bypassed and
+ * direct requests will be made.
+ *
  * @module     ShadowHost Cloak
  * @author     Daniel Sevcik <sevcik@webdevelopers.cz>
  * @copyright  2019 Daniel Sevcik
