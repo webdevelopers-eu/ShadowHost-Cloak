@@ -3,7 +3,7 @@
 namespace ShadowHost\Cloak;
 
 /**
- * Pool with only one Server in the pull that has empty values which
+ * Pool with only one special Server in the pool that has empty values which
  * causes \ShadowHost\Cloak\Proxy to bypass proxy and use direct requests.
  *
  * @module     ShadowHost Cloak

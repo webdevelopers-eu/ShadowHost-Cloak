@@ -5,8 +5,7 @@ namespace ShadowHost\Cloak;
 /**
  * Example:
  *
- * $proxy=new \ShadowHost\Cloak\Proxy(".../proxies.json");
- * $proxy->autoUpdate(100, '-6 hour');
+ * $proxy=new \ShadowHost\Cloak\Proxy(new \ShadowHost\Cloak\PoolXicidaili("proxies.json));
  *
  * $request1=new \ShadowHost\Cloak\Request("GET", "http://www.example.com/?proxy-test-1");
  * $request2=new \ShadowHost\Cloak\Request("GET", "http://www.example.com/?proxy-test-2");
@@ -114,7 +113,7 @@ class Proxy {
      * Constructor.
      *
      * @access public
-     * @param \ShadowHost\Cloak\PoolIfc $pool Object implementing PoolIfc to access list of proxy servers or null for not using proxies.
+     * @param \ShadowHost\Cloak\PoolIfc $pool Object implementing PoolIfc to access list of proxy servers. Use null or PoolNoProxy object for direct requests.
      * @return void
      */
     function __construct(PoolIfc $pool=null) {

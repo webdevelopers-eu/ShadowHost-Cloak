@@ -43,7 +43,7 @@ foreach($requests as $req) {
 Requirements
 ------------
 
-* PHP 5
+* PHP 5+
 * PHP CURL extension support
 * Internet connection ;-)
 
