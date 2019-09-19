@@ -14,6 +14,20 @@ namespace ShadowHost\Cloak;
  */
 class PoolXicidaili extends PoolFileStorage {
     /**
+     * Start on this xicidaili.com page.
+     * @access private
+     * @var int
+     */
+    public $fromPage=1;
+
+    /**
+     * End on this xicidaili.com page.
+     * @access private
+     * @var int
+     */
+    public $toPage=256;
+
+    /**
      * Constructor.
      *
      * @access public
@@ -47,12 +61,10 @@ class PoolXicidaili extends PoolFileStorage {
         $this->open(true);
         $this->read();
         $upToStamp=@$this->meta['xicidaili']['newest'] ?: strtotime("-1 month");
-        $page=1;
-        $maxPage=256;
         $doc=new \DOMDocument;
 
-        while($page < $maxPage && @$doc->loadHTMLFile('https://www.xicidaili.com/wn/'.$page++, LIBXML_NOERROR | LIBXML_NONET | LIBXML_NOWARNING)) {
-            // echo "Parsed page ".($page - 1)."\n";
+        while($this->fromPage < $this->toPage && @$doc->loadHTMLFile('https://www.xicidaili.com/wn/'.$this->fromPage++, LIBXML_NOERROR | LIBXML_NONET | LIBXML_NOWARNING)) {
+            // echo "Parsed page ".($this->fromPage - 1)."\n";
             $xp=new \DOMXPath($doc);
 
             foreach($xp->query('//table[@id="ip_list"]//tr[position()!=1]') as $rowNode) {

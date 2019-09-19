@@ -203,10 +203,10 @@ abstract class PoolFileStorage implements PoolIfc {
      */
     protected function open($forWriting) {
         // echo __METHOD__." write=$forWriting\n";
-        $this->f=@fopen($this->configFile, $forWriting ? 'r+' : 'r');
+        $this->f=fopen($this->configFile, $forWriting ? 'r+' : 'r');
 
         if (!$this->f) {
-            throw new Exception("Cannot open ShadowHost Cloak proxy config file in '$mode' mode: $this->configFile", 5028);
+            throw new Exception("Cannot open ShadowHost Cloak proxy config file ".($forWriting ? 'for writting' : 'for reading').": $this->configFile", 5028);
         }
 
         if (!flock($this->f, $forWriting ? LOCK_EX : LOCK_SH)) {
