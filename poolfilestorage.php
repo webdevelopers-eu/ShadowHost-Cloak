@@ -249,7 +249,7 @@ abstract class PoolFileStorage implements PoolIfc {
         $data=json_decode($contents, true);
 
         if (!is_array($data)) {
-            throw new Exception("Cannot decode data from ShadowHost Cloak proxy config file: $this->configFile (file size $size bytes, ".strlen($contents)." characters read): $contents", 5023);
+            throw new Exception("Cannot decode data from ShadowHost Cloak proxy config file: $this->configFile (file size ".filesize($this->configFile)." bytes, ".strlen($contents)." characters read)", 5023);
         }
 
         $this->pool=array();

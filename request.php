@@ -305,6 +305,14 @@ class Request {
 
 
     public function __toString() {
-        return "Request[curl status ".$this->curlStatus.",proxy ".$this->proxy.",".$this->url."]";
+        $parts=array();
+        $parts[]="CURL status ".$this->curlStatus;
+        if (isset($this->responseHeaders['@code'])) {
+            $parts[]= 'HTTP status '.(int) $this->responseHeaders['@code'];
+        }
+        $parts[]="Proxy ".$this->proxy;
+        $parts[]=$this->url;
+
+        return "Request[".implode(", ", $parts)."]";
     }
 }

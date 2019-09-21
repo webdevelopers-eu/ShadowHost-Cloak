@@ -41,25 +41,64 @@ class Proxy {
 
     /**
      * Config array that defines behavior when
+     * given HTTP status is returned.
+     *
+     * If status has no config option the option from
+     * "default" config is used.
+     *
+     * If specific action is found it is first merged with "default"
+     * and then applied.
+     *
+     * @access public
+     * @var array
+     */
+    public $httpStatusActions=array(
+        "default" => array(
+            "failScore" => 0, // Penalize server - see \ShadowHost\Cloak\PoolIfc::addFailScore()
+            "retry" => false, // Try again another proxy server when this error is received
+            "resetFailScore" => true // Reset failScore to 0
+        ),
+        400 => array( // bad request
+            "failScore" => 1,
+            "retry" => true,
+            "resetFailScore" => false
+        ),
+        406 => array( // not acceptable - bad ACCEPT header
+            "failScore" => 0.2,
+            "retry" => true,
+            "resetFailScore" => false
+        ),
+        505 => array( // HTTP Version Not Supported
+            "failScore" => 0.2,
+            "retry" => true,
+            "resetFailScore" => false
+        ),
+    );
+
+    /**
+     * Config array that defines behavior when
      * given curl status is returned.
      *
      * If status has no config option the option from
      * "default" config is used.
      *
+     * If specific action is found it is first merged with "default"
+     * and then applied.
+     *
      * @access public
      * @var array
      */
-    public $statusActions=array(
+    public $curlStatusActions=array(
         "default" => array(
-            "failScore" => 1, // Penalize server - see \ShadowHost\Cloak\PoolIfc::addFaileScore()
-            "retry" => true, // Try again another server when this error is received
-            "resetFailScore" => false, // Reset failScore to 0
+            "failScore" => 1, // Penalize server - see \ShadowHost\Cloak\PoolIfc::addFailScore()
+            "retry" => true, // Try again another proxy server when this error is received
+            "resetFailScore" => false // Reset failScore to 0
         ),
         // No error
         0 => array(
             "failScore" => 0,
             "retry" => false,
-            "resetFailScore" => true,
+            "resetFailScore" => true
         ),
         // Couldn't connect to server
         7 => array(
@@ -183,24 +222,20 @@ class Proxy {
                     $this->updateRequest($req, $msg);
                     curl_multi_remove_handle($mh, $req->curlHandle);
 
-                    $actions=array_merge($this->statusActions['default'], @$this->statusActions[$req->curlStatus] ?: array());
-                    $loop=$loop || $actions['retry'];
-
-                    if ($actions['resetFailScore']) {
-                        $this->pool->resetFailScore($req->proxy);
-                    } else {
-                        $this->pool->addFailScore($req->proxy, $actions['failScore']);
+                    if (!$retry=$this->applyActions($req->curlStatus, $this->curlStatusActions, $req->proxy)) { // CURL status actions
+                        $retry=$this->applyActions(@$req->responseHeaders['@code'], $this->httpStatusActions, $req->proxy); // HTTP status actions
                     }
+                    $loop=$loop || $retry;
 
                     if ($this->debugPrint) {
                         echo
-                            ($loop ? 'RETRY' : 'FINISHED').', '.
+                            ($retry ? 'RETRY' : 'FINISHED').', '.
                             "${msg['handle']}, ACTIVE: $active, ".($status ? "CURL MULTI STATUS: $status, " : '').
                             'PROXY: '.$req->proxy.', STATUS: #'.$msg['result'].' '.curl_strerror($msg['result']).', '.$req->url."\n";
                     }
 
                     // Set new $req->proxy and re-try
-                    if ($actions['retry']) {
+                    if ($retry) {
                         $this->prepareRequest($req);
                         curl_multi_add_handle($mh, $req->curlHandle);
                     }
@@ -209,6 +244,27 @@ class Proxy {
         } while ($loop || ($active && $status == CURLM_OK));
 
         curl_multi_close($mh);
+    }
+
+    /**
+     * Apply actions based on return status code (HTTP or CURL).
+     *
+     * @access private
+     * @param int $code status code
+     * @param array $actionsList either $this->curlStatusActions or $this->httpStatusActions
+     * @return bool true to retry request with another proxy, false to don't retry
+     */
+    private function applyActions($code, $actionsList, Server $proxy) {
+        $code=(int) $code;
+        $action=array_merge($actionsList['default'], @$actionsList[$code] ?: array());
+
+        if ($action['resetFailScore']) {
+            $this->pool->resetFailScore($proxy);
+        } else {
+            $this->pool->addFailScore($proxy, $action['failScore']);
+        }
+
+        return $action['retry'];
     }
 
     /**
